@@ -17,6 +17,12 @@ import recipeRoutes from "./routes/recipe.js"
 app.use("/", userRoutes)
 app.use("/recipe", recipeRoutes)
 
-app.listen(PORT, (err) => {
-    console.log(`app is listening on port ${PORT}`)
-})
+// Only listen on port in local development, not in Vercel serverless
+if (process.env.NODE_ENV !== 'production') {
+    app.listen(PORT, (err) => {
+        console.log(`app is listening on port ${PORT}`)
+    })
+}
+
+// Export the Express app for Vercel serverless functions
+export default app
