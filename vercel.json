@@ -1,0 +1,25 @@
+{
+    "builds": [
+        {
+            "src": "frontend/food-blog-app/package.json",
+            "use": "@vercel/static-build",
+            "config": {
+                "distDir": "frontend/food-blog-app/dist"
+            }
+        },
+        {
+            "src": "backend/server.js",
+            "use": "@vercel/node"
+        }
+    ],
+    "routes": [
+        {
+            "src": "/api/(.*)",
+            "dest": "backend/server.js"
+        },
+        {
+            "src": "/(.*)",
+            "dest": "frontend/food-blog-app/dist/$1"
+        }
+    ]
+}
