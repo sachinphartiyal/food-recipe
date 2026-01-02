@@ -1,12 +1,7 @@
 {
+    "buildCommand": "cd frontend/food-blog-app && npm run build",
+    "outputDirectory": "frontend/food-blog-app/dist",
     "builds": [
-        {
-            "src": "frontend/food-blog-app/package.json",
-            "use": "@vercel/static-build",
-            "config": {
-                "distDir": "frontend/food-blog-app/dist"
-            }
-        },
         {
             "src": "backend/server.js",
             "use": "@vercel/node"
@@ -19,7 +14,7 @@
         },
         {
             "src": "/(.*)",
-            "dest": "frontend/food-blog-app/dist/$1"
+            "dest": "frontend/food-blog-app/dist/index.html"
         }
     ]
 }
