@@ -1,0 +1,9 @@
+{
+    "name": "food-recipe-app",
+    "version": "1.0.0",
+    "scripts": {
+        "build": "cd frontend/food-blog-app && npm install && npm run build",
+        "install-backend": "cd backend && npm install",
+        "install-frontend": "cd frontend/food-blog-app && npm install"
+    }
+}
