@@ -14,8 +14,8 @@ app.use(express.static("public"))
 
 import userRoutes from "./routes/user.js"
 import recipeRoutes from "./routes/recipe.js"
-app.use("/", userRoutes)
-app.use("/recipe", recipeRoutes)
+app.use("/api", userRoutes)
+app.use("/api/recipe", recipeRoutes)
 
 // Only listen on port in local development, not in Vercel serverless
 if (process.env.NODE_ENV !== 'production') {
