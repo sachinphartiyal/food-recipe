@@ -8,21 +8,24 @@ import cors from "cors"
 const PORT = process.env.PORT || 3000
 connectDb()
 
+// Parses incoming JSON requests
+// Without this → req.body would be undefined
 app.use(express.json())
+
+// Allows frontend (React, Angular) to access backend
+// Needed when frontend & backend are on different ports
 app.use(cors())
+
+// Makes public/ folder accessible via browser
 app.use(express.static("public"))
 
 import userRoutes from "./routes/user.js"
 import recipeRoutes from "./routes/recipe.js"
-app.use("/api", userRoutes)
-app.use("/api/recipe", recipeRoutes)
+app.use("/", userRoutes)
+app.use("/recipe", recipeRoutes)
 
-// Only listen on port in local development, not in Vercel serverless
-if (process.env.NODE_ENV !== 'production') {
-    app.listen(PORT, (err) => {
-        console.log(`app is listening on port ${PORT}`)
-    })
-}
+app.listen(PORT, (err) => {
+    console.log(`app is listening on port ${PORT}`)
+})
 
-// Export the Express app for Vercel serverless functions
 export default app

@@ -5,6 +5,7 @@ import Home from './pages/Home'
 import MainNavigation from './components/MainNavigation'
 import axios from 'axios'
 import AddFoodRecipe from './pages/AddFoodRecipe'
+
 import EditRecipe from './pages/EditRecipe'
 import RecipeDetails from './pages/RecipeDetails'
 import RecipeItems from './components/RecipeItems'
@@ -13,9 +14,13 @@ const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
 const getAllRecipes = async () => {
   let allRecipes = []
-  await axios.get(`${backendUrl}/recipe`).then(res => {
-    allRecipes = res.data
-  })
+
+  await axios
+    .get(`${backendUrl}/recipe`)
+    .then(res => {
+      allRecipes = res.data
+    })
+
   return allRecipes
 }
 
@@ -31,10 +36,12 @@ const getFavRecipes = () => {
 
 const getRecipe = async ({ params }) => {
   let recipe;
-  await axios.get(`${backendUrl}/recipe/${params.id}`)
+  await axios
+    .get(`${backendUrl}/recipe/${params.id}`)
     .then(res => recipe = res.data)
 
-  await axios.get(`${backendUrl}/user/${recipe.createdBy}`)
+  await axios
+    .get(`${backendUrl}/user/${recipe.createdBy}`)
     .then(res => {
       recipe = { ...recipe, email: res.data.email }
     })
@@ -44,22 +51,47 @@ const getRecipe = async ({ params }) => {
 
 const router = createBrowserRouter([
   {
-    path: "/", element: <MainNavigation />, children: [
-      { path: "/", element: <Home />, loader: getAllRecipes },
-      { path: "/myRecipe", element: <RecipeItems />, loader: getMyRecipes },
-      { path: "/favRecipe", element: <RecipeItems />, loader: getFavRecipes },
-      { path: "/addRecipe", element: <AddFoodRecipe /> },
-      { path: "/editRecipe/:id", element: <EditRecipe /> },
-      { path: "/recipe/:id", element: <RecipeDetails />, loader: getRecipe }
+    path: "/",
+    element: <MainNavigation />,
+    children: [
+      {
+        path: "/",
+        element: <Home />,
+        loader: getAllRecipes
+      },
+      {
+        path: "/myRecipe",
+        element: <RecipeItems />,
+        loader: getMyRecipes
+      },
+      {
+        path: "/favRecipe",
+        element: <RecipeItems />,
+        loader: getFavRecipes
+      },
+      {
+        path: "/addRecipe",
+        element: <AddFoodRecipe />
+      },
+      {
+        path: "/editRecipe/:id",
+        element: <EditRecipe />
+      },
+      {
+        path: "/recipe/:id",
+        element: <RecipeDetails />,
+        loader: getRecipe
+      },
     ]
   }
-
 ])
 
 export default function App() {
   return (
     <>
-      <RouterProvider router={router}></RouterProvider>
+      <RouterProvider
+        router={router}>
+      </RouterProvider>
     </>
   )
 }

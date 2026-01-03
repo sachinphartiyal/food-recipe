@@ -1,4 +1,4 @@
-import Recipes from "../models/recipe.js"
+import Recipes from "../models/recipe.js" // Needed to interact with MongoDB
 import multer from "multer"
 
 const storage = multer.diskStorage({
@@ -11,18 +11,22 @@ const storage = multer.diskStorage({
     }
 })
 
+// multer middleware
 const upload = multer({ storage: storage })
 
+// Get all recipes
 const getRecipes = async (req, res) => {
     const recipes = await Recipes.find()
     return res.json(recipes)
 }
 
+// Get single recipe
 const getRecipe = async (req, res) => {
     const recipe = await Recipes.findById(req.params.id)
     res.json(recipe)
 }
 
+// Add recipe
 const addRecipe = async (req, res) => {
     console.log(req.user)
     const { title, ingredients, instructions, time } = req.body
@@ -32,20 +36,32 @@ const addRecipe = async (req, res) => {
     }
 
     const newRecipe = await Recipes.create({
-        title, ingredients, instructions, time, coverImage: req.file.filename,
+        title,
+        ingredients,
+        instructions,
+        time,
+        coverImage: req.file.filename,
         createdBy: req.user.id
     })
     return res.json(newRecipe)
 }
 
+// Edit recipe
 const editRecipe = async (req, res) => {
     const { title, ingredients, instructions, time } = req.body
     let recipe = await Recipes.findById(req.params.id)
 
     try {
         if (recipe) {
-            let coverImage = req.file?.filename ? req.file?.filename : recipe.coverImage
-            await Recipes.findByIdAndUpdate(req.params.id, { ...req.body, coverImage }, { new: true })
+            let coverImage = req.file?.filename
+                ? req.file?.filename
+                : recipe.coverImage
+
+            await Recipes.findByIdAndUpdate(
+                req.params.id,
+                { ...req.body, coverImage },
+                { new: true }
+            )
             res.json({ title, ingredients, instructions, time })
         }
     }
