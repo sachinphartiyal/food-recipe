@@ -14,10 +14,43 @@ const storage = multer.diskStorage({
 // multer middleware
 const upload = multer({ storage: storage })
 
-// Get all recipes
+// Get all recipes with search and filter support
 const getRecipes = async (req, res) => {
-    const recipes = await Recipes.find()
-    return res.json(recipes)
+    try {
+        const { search, category, difficulty, maxTime } = req.query
+
+        // Build query object
+        let query = {}
+
+        // Search in title and ingredients (case-insensitive)
+        if (search) {
+            query.$or = [
+                { title: { $regex: search, $options: 'i' } },
+                { ingredients: { $regex: search, $options: 'i' } }
+            ]
+        }
+
+        // Filter by category
+        if (category && category !== 'All') {
+            query.category = category
+        }
+
+        // Filter by difficulty
+        if (difficulty && difficulty !== 'All') {
+            query.difficulty = difficulty
+        }
+
+        // Filter by max cooking time
+        if (maxTime) {
+            // Extract numeric value from time string (e.g., "30 mins" -> 30)
+            query.time = { $regex: `^([0-9]|[1-9][0-9]|${maxTime})`, $options: 'i' }
+        }
+
+        const recipes = await Recipes.find(query)
+        return res.json(recipes)
+    } catch (err) {
+        return res.status(500).json({ message: "Error fetching recipes", error: err.message })
+    }
 }
 
 // Get single recipe
@@ -29,7 +62,7 @@ const getRecipe = async (req, res) => {
 // Add recipe
 const addRecipe = async (req, res) => {
     console.log(req.user)
-    const { title, ingredients, instructions, time } = req.body
+    const { title, ingredients, instructions, time, category, difficulty } = req.body
 
     if (!title || !ingredients || !instructions) {
         res.json({ message: "Required fields can't be empty" })
@@ -40,6 +73,8 @@ const addRecipe = async (req, res) => {
         ingredients,
         instructions,
         time,
+        category: category || '',
+        difficulty: difficulty || '',
         coverImage: req.file.filename,
         createdBy: req.user.id
     })
@@ -80,4 +115,11 @@ const deleteRecipe = async (req, res) => {
     }
 }
 
-export { getRecipes, getRecipe, addRecipe, editRecipe, deleteRecipe, upload }
+export {
+    getRecipes,
+    getRecipe,
+    addRecipe,
+    editRecipe,
+    deleteRecipe,
+    upload
+}

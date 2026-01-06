@@ -10,9 +10,12 @@ import { MdDelete } from "react-icons/md";
 
 import axios from 'axios';
 
-export default function RecipeItems() {
+export default function RecipeItems({ recipes: propRecipes }) {
     // This function fetches data before the page loads.
-    const recipes = useLoaderData()
+    const loaderRecipes = useLoaderData()
+
+    // Use prop recipes if provided, otherwise use loader data
+    const recipes = propRecipes || loaderRecipes
 
     const [allRecipes, setAllRecipes] = useState()
 
@@ -68,10 +71,24 @@ export default function RecipeItems() {
                     allRecipes?.map((item, index) => {
                         return (
                             // Recipe Card
-                            < div key={index} className='card' onDoubleClick={() => navigate(`/recipe/${item._id}`)}>
+                            <div key={index} className='card' onDoubleClick={() => navigate(`/recipe/${item._id}`)}>
                                 <img src={`${import.meta.env.VITE_BACKEND_URL}/images/${item.coverImage}`} width="120px" height="100px"></img>
                                 <div className='card-body'>
                                     <div className='title'>{item.title}</div>
+
+                                    {/* Category and Difficulty Badges */}
+                                    <div className='badges'>
+                                        {item.category && (
+                                            <span className='badge badge-category'>{item.category}</span>
+                                        )}
+                                        
+                                        {item.difficulty && (
+                                            <span className={`badge badge-difficulty badge-${item.difficulty.toLowerCase()}`}>
+                                                {item.difficulty}
+                                            </span>
+                                        )}
+                                    </div>
+
                                     <div className='icons'>
 
                                         <div className='timer'>

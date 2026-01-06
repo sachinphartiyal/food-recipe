@@ -44,7 +44,29 @@ export default function AddFoodRecipe() {
 
                     <div className='form-control'>
                         <label>Time</label>
-                        <input type="text" className='input' name="time" onChange={onHandleChange}></input>
+                        <input type="text" className='input' name="time" onChange={onHandleChange} placeholder="e.g., 30 mins"></input>
+                    </div>
+
+                    <div className='form-control'>
+                        <label>Category</label>
+                        <select className='input' name="category" onChange={onHandleChange}>
+                            <option value="">Select Category</option>
+                            <option value="Breakfast">Breakfast</option>
+                            <option value="Lunch">Lunch</option>
+                            <option value="Dinner">Dinner</option>
+                            <option value="Dessert">Dessert</option>
+                            <option value="Snack">Snack</option>
+                        </select>
+                    </div>
+
+                    <div className='form-control'>
+                        <label>Difficulty</label>
+                        <select className='input' name="difficulty" onChange={onHandleChange}>
+                            <option value="">Select Difficulty</option>
+                            <option value="Easy">Easy</option>
+                            <option value="Medium">Medium</option>
+                            <option value="Hard">Hard</option>
+                        </select>
                     </div>
 
                     <div className='form-control'>

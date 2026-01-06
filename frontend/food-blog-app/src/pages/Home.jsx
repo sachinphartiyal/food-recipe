@@ -1,15 +1,96 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import foodRecipe from '../assets/foodRecipe.png'
 import Navbar from '../components/Navbar'
 import Footer from '../components/Footer'
 import RecipeItems from '../components/RecipeItems'
-import { useNavigate } from 'react-router-dom'
+import SearchBar from '../components/SearchBar'
+import FilterPanel from '../components/FilterPanel'
+import { useNavigate, useLoaderData } from 'react-router-dom'
 import Modal from '../components/Modal'
 import InputForm from '../components/InputForm'
+import axios from 'axios'
 
 export default function Home() {
     const navigate = useNavigate()
+    const initialRecipes = useLoaderData()
+    // Controls whether the login/signup modal is visible.
     const [isOpen, setIsOpen] = useState(false)
+
+    // Search and filter state
+
+    // Stores search input text
+    const [searchQuery, setSearchQuery] = useState('')
+
+    // Stores selected filters
+    const [filters, setFilters] = useState({
+        category: 'All',
+        difficulty: 'All',
+        maxTime: 'All'
+    })
+
+    // Stores recipes after applying search & filters
+    const [filteredRecipes, setFilteredRecipes] = useState(initialRecipes)
+
+    // Shows loading indicator while fetching data
+    const [isLoading, setIsLoading] = useState(false)
+
+    // Debounced search and filter effect
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            fetchFilteredRecipes()
+        }, 300) // 300ms debounce
+
+        // Cancels the previous timer before starting a new one
+        return () => clearTimeout(timer)
+    }, [searchQuery, filters])
+
+    const fetchFilteredRecipes = async () => {
+        setIsLoading(true)
+        try {
+            const params = new URLSearchParams()
+
+            // append(name, value)
+            if (searchQuery) params.append('search', searchQuery)
+            if (filters.category !== 'All') params.append('category', filters.category)
+            if (filters.difficulty !== 'All') params.append('difficulty', filters.difficulty)
+            if (filters.maxTime !== 'All') params.append('maxTime', filters.maxTime)
+
+            const response = await axios.get(
+                `${import.meta.env.VITE_BACKEND_URL}/recipe?${params.toString()}`
+            )
+
+            setFilteredRecipes(response.data)
+        } catch (error) {
+            console.error('Error fetching recipes:', error)
+            setFilteredRecipes([])
+        } finally {
+            setIsLoading(false)
+        }
+    }
+
+    const handleSearchChange = (query) => {
+        setSearchQuery(query)
+    }
+
+    const handleClearSearch = () => {
+        setSearchQuery('')
+    }
+
+    const handleFilterChange = (filterType, value) => {
+        setFilters(prev => ({
+            ...prev,
+            [filterType]: value
+        }))
+    }
+
+    const handleClearFilters = () => {
+        setFilters({
+            category: 'All',
+            difficulty: 'All',
+            maxTime: 'All'
+        })
+        setSearchQuery('')
+    }
 
     const addRecipe = () => {
         let token = localStorage.getItem("token")
@@ -44,7 +125,28 @@ export default function Home() {
             }
 
             <div className='recipe'>
-                <RecipeItems />
+                <SearchBar
+                    searchQuery={searchQuery}
+                    onSearchChange={handleSearchChange}
+                    onClearSearch={handleClearSearch}
+                />
+
+                <FilterPanel
+                    filters={filters}
+                    onFilterChange={handleFilterChange}
+                    onClearFilters={handleClearFilters}
+                />
+
+                {isLoading ? (
+                    <div className='loading-state'>Loading recipes...</div>
+                ) : filteredRecipes.length === 0 ? (
+                    <div className='empty-state'>
+                        <h3>No recipes found</h3>
+                        <p>Try adjusting your search or filters</p>
+                    </div>
+                ) : (
+                    <RecipeItems recipes={filteredRecipes} />
+                )}
             </div>
         </>
     )

@@ -17,7 +17,9 @@ export default function EditRecipe() {
                         title: res.title,
                         ingredients: res.ingredients.join(","),
                         instructions: res.instructions,
-                        time: res.time
+                        time: res.time,
+                        category: res.category || '',
+                        difficulty: res.difficulty || ''
                     })
                 })
         }
@@ -72,8 +74,39 @@ export default function EditRecipe() {
                             className='input'
                             name="time"
                             onChange={onHandleChange}
-                            value={recipeData.time}>
+                            value={recipeData.time}
+                            placeholder="e.g., 30 mins">
                         </input>
+                    </div>
+
+                    <div className='form-control'>
+                        <label>Category</label>
+                        <select
+                            className='input'
+                            name="category"
+                            onChange={onHandleChange}
+                            value={recipeData.category}>
+                            <option value="">Select Category</option>
+                            <option value="Breakfast">Breakfast</option>
+                            <option value="Lunch">Lunch</option>
+                            <option value="Dinner">Dinner</option>
+                            <option value="Dessert">Dessert</option>
+                            <option value="Snack">Snack</option>
+                        </select>
+                    </div>
+
+                    <div className='form-control'>
+                        <label>Difficulty</label>
+                        <select
+                            className='input'
+                            name="difficulty"
+                            onChange={onHandleChange}
+                            value={recipeData.difficulty}>
+                            <option value="">Select Difficulty</option>
+                            <option value="Easy">Easy</option>
+                            <option value="Medium">Medium</option>
+                            <option value="Hard">Hard</option>
+                        </select>
                     </div>
 
                     <div className='form-control'>
