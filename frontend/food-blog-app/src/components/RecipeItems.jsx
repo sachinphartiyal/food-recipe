@@ -81,7 +81,7 @@ export default function RecipeItems({ recipes: propRecipes }) {
                                         {item.category && (
                                             <span className='badge badge-category'>{item.category}</span>
                                         )}
-                                        
+
                                         {item.difficulty && (
                                             <span className={`badge badge-difficulty badge-${item.difficulty.toLowerCase()}`}>
                                                 {item.difficulty}

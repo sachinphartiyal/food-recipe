@@ -22,7 +22,7 @@ const getRecipes = async (req, res) => {
         // Build query object
         let query = {}
 
-        // Search in title and ingredients (case-insensitive)
+        // Search by title or ingredients (case-insensitive)
         if (search) {
             query.$or = [
                 { title: { $regex: search, $options: 'i' } },
@@ -62,7 +62,14 @@ const getRecipe = async (req, res) => {
 // Add recipe
 const addRecipe = async (req, res) => {
     console.log(req.user)
-    const { title, ingredients, instructions, time, category, difficulty } = req.body
+    const {
+        title,
+        ingredients,
+        instructions,
+        time,
+        category,
+        difficulty
+    } = req.body
 
     if (!title || !ingredients || !instructions) {
         res.json({ message: "Required fields can't be empty" })
@@ -83,7 +90,13 @@ const addRecipe = async (req, res) => {
 
 // Edit recipe
 const editRecipe = async (req, res) => {
-    const { title, ingredients, instructions, time } = req.body
+    const {
+        title,
+        ingredients,
+        instructions,
+        time
+    } = req.body
+    
     let recipe = await Recipes.findById(req.params.id)
 
     try {
@@ -103,8 +116,9 @@ const editRecipe = async (req, res) => {
     catch (err) {
         return res.status(404).json({ message: err })
     }
-
 }
+
+// Delete recipe
 const deleteRecipe = async (req, res) => {
     try {
         await Recipes.deleteOne({ _id: req.params.id })
